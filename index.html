@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LandSure | Official Registry</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Titillium+Web:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    
+    <style>
+        /* --- SECURITY THEME --- */
+        :root {
+            --secure-blue: #4cc9f0;
+            --secure-green: #00b894;
+            --secure-gold: #fdcb6e;
+            --deep-bg: #0b1118;
+            --glass-bg: rgba(18, 28, 41, 0.85);
+            --glass-border: rgba(76, 201, 240, 0.2);
+        }
+
+        body {
+            font-family: 'Titillium Web', sans-serif;
+            background-color: var(--deep-bg);
+            color: #e0e6ed;
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(11, 17, 24, 0.92), rgba(11, 17, 24, 0.95)),
+                url('https://img.freepik.com/free-vector/dark-hexagonal-background-with-gradient-color_79603-1409.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, h4, .brand-text, .btn-secure { font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* --- CARDS --- */
+        .secure-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 25px;
+            transition: 0.3s;
+        }
+        .secure-card:hover { transform: translateY(-5px); border-color: var(--secure-blue); }
+
+        /* --- COMPONENTS --- */
+        .navbar { background: rgba(11, 17, 24, 0.95); border-bottom: 1px solid rgba(76, 201, 240, 0.1); }
+        .brand-text { font-weight: 800; color: white; letter-spacing: 2px; }
+
+        .btn-secure {
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            border: none; color: white; border-radius: 4px; padding: 10px 25px; font-weight: 700;
+            clip-path: polygon(10% 0, 100% 0, 100% 80%, 90% 100%, 0 100%, 0 20%);
+            transition: 0.3s;
+        }
+        .btn-secure:hover { box-shadow: 0 0 15px rgba(76, 201, 240, 0.4); transform: translateY(-2px); }
+        .btn-action-green { background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); }
+
+        .form-control, .form-select {
+            background: rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid #2d3748;
+            color: var(--secure-blue) !important;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .form-control:focus, .form-select:focus { border-color: var(--secure-blue); box-shadow: 0 0 10px rgba(76, 201, 240, 0.1); }
+
+        .header-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; opacity: 0.8; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-pills .nav-link.active { background: var(--secure-blue); color: #0b1118; box-shadow: 0 0 15px rgba(76, 201, 240, 0.3); }
+        .nav-pills .nav-link { color: #8892b0; font-weight: 700; }
+        
+        #loader { background: rgba(11, 17, 24, 0.95); border: 1px solid var(--secure-blue); border-radius: 12px; padding: 30px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top py-3">
+        <div class="container">
+            <a class="navbar-brand brand-text fs-4" href="#"><i class="bi bi-shield-lock-fill me-2"></i>LANDSURE</a>
+            <div class="d-flex align-items-center">
+                <span id="roleDisplay" class="me-3 fw-bold text-uppercase small"></span>
+                <button id="connectBtn" class="btn btn-outline-info btn-sm" onclick="connectWallet()">LINK WALLET</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="loader" class="text-center" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
+        <div class="spinner-border text-info" role="status"></div>
+        <div class="mt-3 fw-bold text-info">ENCRYPTING DATA...</div>
+    </div>
+
+    <div class="container" style="margin-top: 120px; padding-bottom: 50px;">
+
+        <div id="view-landing" style="display: block;">
+            <div class="row align-items-center" style="min-height: 70vh;">
+                <div class="col-lg-6">
+                    <h1 class="display-3 fw-bold mb-3 text-white">SECURE LAND<br><span style="color: var(--secure-blue)">REGISTRY PORTAL</span></h1>
+                    <p class="lead text-secondary mb-5">Official Government Blockchain Interface.</p>
+                    <button onclick="connectWallet()" class="btn btn-secure btn-lg">AUTHENTICATE IDENTITY</button>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                     <img src="https://img.freepik.com/free-vector/cyber-security-concept_23-2148533311.jpg" class="img-fluid secure-card p-1" style="opacity: 0.8; border: 1px solid var(--secure-blue);">
+                </div>
+            </div>
+        </div>
+
+        <div id="view-govt" style="display: none;">
+            <div class="secure-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="m-0 text-white">VERIFICATION DASHBOARD (PENDING)</h2>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="refreshData()">SYNC DATA</button>
+                </div>
+                <div id="govtGrid" class="row g-4"></div>
+            </div>
+        </div>
+
+        <div id="view-citizen" style="display: none;">
+            <ul class="nav nav-pills mb-5 justify-content-center" id="pills-tab">
+                <li class="nav-item"><button class="nav-link active" id="tab-my-btn" onclick="showTab('tab-my')">MY VAULT</button></li>
+                <li class="nav-item"><button class="nav-link" id="tab-market-btn" onclick="showTab('tab-market')">MARKETPLACE</button></li>
+                <li class="nav-item"><button class="nav-link" id="tab-register-btn" onclick="showTab('tab-register')">NEW REGISTRATION</button></li>
+            </ul>
+
+            <div id="tab-my" class="tab-content">
+                <div class="secure-card">
+                    <h3 class="text-white mb-4">OWNERSHIP RECORDS</h3>
+                    <div id="myLandGrid" class="row g-4"></div>
+                </div>
+            </div>
+
+            <div id="tab-market" class="tab-content" style="display:none">
+                 <div class="secure-card" style="border-color: var(--secure-green);">
+                    <h3 style="color: var(--secure-green)" class="mb-4">PUBLIC LISTINGS</h3>
+                    <div id="marketGrid" class="row g-4"></div>
+                </div>
+            </div>
+
+            <div id="tab-register" class="tab-content" style="display:none">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="secure-card">
+                            <h3 class="text-center mb-4 text-white">OFFICIAL LAND REGISTRATION FORM</h3>
+                            
+                            <h5 class="text-info border-bottom border-secondary pb-2 mb-3">1. Owner Details</h5>
+                            <div class="mb-3">
+                                <label class="small text-secondary">FULL LEGAL NAME</label>
+                                <input type="text" id="regName" class="form-control" placeholder="e.g. Rahul Sharma">
+                            </div>
+
+                            <h5 class="text-info border-bottom border-secondary pb-2 mb-3 mt-4">2. Property Details</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="small text-secondary">SURVEY / PID NUMBER</label>
+                                    <input type="text" id="regSurvey" class="form-control" placeholder="e.g. 87-B/Block-4">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small text-secondary">PROPERTY TYPE</label>
+                                    <select id="regType" class="form-select">
+                                        <option value="Residential">Residential</option>
+                                        <option value="Commercial">Commercial</option>
+                                        <option value="Agricultural">Agricultural</option>
+                                        <option value="Industrial">Industrial</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="small text-secondary">PHYSICAL ADDRESS</label>
+                                    <input type="text" id="regLocation" class="form-control" placeholder="Full Street Address">
+                                </div>
+                                <div class="col-md-6">
+                                     <label class="small text-secondary">AREA (SQ FT)</label>
+                                    <input type="number" id="regArea" class="form-control" placeholder="0.00">
+                                </div>
+                                <div class="col-md-6">
+                                     <label class="small text-secondary">MARKET VALUE (ETH)</label>
+                                    <input type="number" id="regPrice" class="form-control" placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <h5 class="text-info border-bottom border-secondary pb-2 mb-3 mt-4">3. Documentation</h5>
+                            <div class="mb-3">
+                                <label class="small text-secondary">PROPERTY DEED (PDF/IMG)</label>
+                                <input type="file" id="regFile" class="form-control">
+                            </div>
+
+                            <button onclick="registerLand()" class="btn btn-secure w-100 py-3 mt-4">
+                                SUBMIT TO GOVERNMENT <i class="bi bi-cloud-arrow-up-fill ms-2"></i>
+                            </button>
+                            <div id="regStatus" class="mt-3 text-center fw-bold text-info"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="abi.js"></script>
+    <script>
+        // ===========================================
+        // ⚠️ PASTE YOUR PINATA JWT HERE ⚠️
+        // ===========================================
+        const PINATA_JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIwYjFkZTRjOC02NzMyLTQwMzgtOTk0ZS0yZDE5YzZjMDFhZGIiLCJlbWFpbCI6InJpc2hpcmFqanNyMjBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImJlMGUwMzdiN2EyNjY0ODMyODI1Iiwic2NvcGVkS2V5U2VjcmV0IjoiOTc3MWY1YmNmNjk0YWNhZjc2MWUwMTk2MDNkM2M3ZjdmOTVjOTlkMzI1NjYyZmZhOWE1MjZhZGQxOGY2NDUxYyIsImV4cCI6MTc5NjAyNzE0Nn0.E68UiykRSjJRYGl0GzAP3RZ0bUktlwz3v8VdgC8rnwI"; 
+
+        let provider, signer, contract, userAddress, govtAddress;
+
+        // --- NAVIGATION ---
+        function showView(id) {
+            document.querySelectorAll('#view-landing, #view-govt, #view-citizen').forEach(el => el.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-pills .nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).style.display = 'block';
+            document.getElementById(id + "-btn").classList.add('active');
+            refreshData();
+        }
+        function toggleLoader(show) { document.getElementById('loader').style.display = show ? 'block' : 'none'; }
+
+        // --- BLOCKCHAIN CONNECTION ---
+        async function connectWallet() {
+            if (!window.ethereum) return alert("Install MetaMask");
+            try {
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+                contract = new ethers.Contract(ContractAddress, ContractABI, signer);
+                
+                govtAddress = await contract.government();
+                const shortAddr = userAddress.substring(0,6) + "..." + userAddress.substring(38);
+                document.getElementById('connectBtn').innerText = shortAddr;
+                
+                if(userAddress.toLowerCase() === govtAddress.toLowerCase()) {
+                    document.getElementById('roleDisplay').innerText = "OFFICIAL ADMIN";
+                    showView('view-govt'); loadGovtDashboard();
+                } else {
+                    document.getElementById('roleDisplay').innerText = "CITIZEN";
+                    showView('view-citizen'); showTab('tab-my');
+                }
+            } catch(e) { console.error(e); alert("Connection Failed"); }
+        }
+
+        async function refreshData() {
+            if (userAddress && govtAddress && userAddress.toLowerCase() === govtAddress.toLowerCase()) loadGovtDashboard();
+            else if (userAddress) { loadMyLands(); loadMarketplace(); }
+        }
+
+        // --- DATA FETCHING ---
+        async function fetchAllLands() {
+            const count = await contract.landCount();
+            let lands = [];
+            for(let i=1; i<=count; i++) { lands.push(await contract.getLand(i)); }
+            return lands;
+        }
+
+        // 1. GOVT DASHBOARD
+        async function loadGovtDashboard() {
+            const grid = document.getElementById('govtGrid');
+            grid.innerHTML = '<div class="text-center text-info">Scanning...</div>';
+            const lands = await fetchAllLands();
+            const pending = lands.filter(l => l.isVerified === false);
+            grid.innerHTML = "";
+            if(pending.length === 0) { grid.innerHTML = '<div class="text-center text-secondary">No pending verifications.</div>'; return; }
+
+            pending.forEach(land => {
+                grid.innerHTML += `
+                    <div class="col-md-6">
+                        <div class="secure-card h-100" style="border-color: var(--secure-gold)">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-warning text-dark">ID #${land.id}</span>
+                                <small class="text-secondary">Owner: ${land.fullName} (${land.owner.substring(0,6)}...)</small>
+                            </div>
+                            <h5 class="text-white">${land.location}</h5>
+                            <div class="small text-secondary mb-3">
+                                <div><b>PID:</b> ${land.surveyNumber}</div>
+                                <div><b>Type:</b> ${land.propertyType}</div>
+                                <div><b>Area:</b> ${land.area} sq ft</div>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="https://gateway.pinata.cloud/ipfs/${land.ipfsHash}" target="_blank" class="btn btn-sm btn-outline-secondary">View Deed</a>
+                                <button onclick="verifyLand(${land.id})" class="btn btn-action-green btn-sm">VERIFY</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // 2. MY LANDS
+        async function loadMyLands() {
+            const grid = document.getElementById('myLandGrid');
+            grid.innerHTML = '<div class="text-center text-info">Loading Vault...</div>';
+            const lands = await fetchAllLands();
+            const myLands = lands.filter(l => l.owner.toLowerCase() === userAddress.toLowerCase());
+            grid.innerHTML = "";
+            if(myLands.length === 0) { grid.innerHTML = '<div class="text-center text-secondary">Vault Empty.</div>'; return; }
+
+            myLands.forEach(land => {
+                let status = land.isVerified ? `<span class="badge bg-success">VERIFIED</span>` : `<span class="badge bg-warning text-dark">PENDING</span>`;
+                let btn = !land.isVerified ? `<button disabled class="btn btn-secondary btn-sm w-100">Processing...</button>` :
+                          land.isForSale ? `<button disabled class="btn btn-outline-success btn-sm w-100">Listed</button>` :
+                          `<button onclick="listForSale(${land.id})" class="btn btn-secure btn-sm w-100">LIST FOR SALE</button>`;
+                
+                grid.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="secure-card h-100">
+                            <div class="d-flex justify-content-between mb-2"><span class="badge bg-info text-dark">ID #${land.id}</span> ${status}</div>
+                            <h5 class="text-white">${land.location}</h5>
+                            <div class="small text-secondary mb-3">
+                                <div><b>PID:</b> ${land.surveyNumber}</div>
+                                <div><b>Type:</b> ${land.propertyType}</div>
+                                <div><b>Valuation:</b> ${ethers.formatEther(land.price)} ETH</div>
+                            </div>
+                            ${btn}
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // 3. MARKETPLACE
+        async function loadMarketplace() {
+            const grid = document.getElementById('marketGrid');
+            grid.innerHTML = '<div class="text-center text-info">Loading Market...</div>';
+            const lands = await fetchAllLands();
+            const market = lands.filter(l => l.isForSale === true && l.owner.toLowerCase() !== userAddress.toLowerCase());
+            grid.innerHTML = "";
+            if(market.length === 0) { grid.innerHTML = '<div class="text-center text-secondary">No active listings.</div>'; return; }
+
+            market.forEach(land => {
+                grid.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="secure-card h-100" style="border-color: var(--secure-green)">
+                            <div class="d-flex justify-content-between mb-2"><span class="badge bg-success">FOR SALE</span> <small class="text-secondary">#${land.id}</small></div>
+                            <h5 class="text-white">${land.location}</h5>
+                            <div class="small text-secondary mb-3">
+                                <div><b>Owner:</b> ${land.fullName}</div>
+                                <div><b>PID:</b> ${land.surveyNumber}</div>
+                                <div><b>Type:</b> ${land.propertyType}</div>
+                            </div>
+                            <h3 class="text-white text-center py-2">${ethers.formatEther(land.price)} ETH</h3>
+                            <button onclick="buyLand(${land.id}, '${land.price}')" class="btn btn-action-green w-100">BUY NOW</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // --- ACTIONS ---
+        async function uploadToIPFS(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('pinataMetadata', JSON.stringify({ name: "LandDeed" }));
+            formData.append('pinataOptions', JSON.stringify({ cidVersion: 0 }));
+            try {
+                const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+                    method: "POST", headers: { Authorization: `Bearer ${PINATA_JWT}` }, body: formData
+                });
+                return (await res.json()).IpfsHash;
+            } catch (e) { return null; }
+        }
+
+        async function registerLand() {
+            const file = document.getElementById("regFile").files[0];
+            if(!file) return alert("File required!");
+            toggleLoader(true);
+            
+            const hash = await uploadToIPFS(file);
+            if(!hash) { toggleLoader(false); return alert("Upload failed"); }
+
+            try {
+                const name = document.getElementById("regName").value;
+                const survey = document.getElementById("regSurvey").value;
+                const type = document.getElementById("regType").value;
+                const loc = document.getElementById("regLocation").value;
+                const area = document.getElementById("regArea").value;
+                const price = ethers.parseEther(document.getElementById("regPrice").value);
+
+                // Updated Contract Call with 7 Arguments
+                const tx = await contract.registerLand(name, survey, type, loc, area, price, hash);
+                await tx.wait();
+                
+                alert("Registration Successful!");
+                showTab('tab-my');
+            } catch(e) { console.error(e); alert("Failed: " + e.reason); }
+            toggleLoader(false);
+        }
+
+        async function verifyLand(id) {
+            if(!confirm("Verify this land?")) return;
+            toggleLoader(true);
+            try { await (await contract.verifyLand(id)).wait(); loadGovtDashboard(); } catch(e) { alert("Failed"); }
+            toggleLoader(false);
+        }
+        async function listForSale(id) {
+            toggleLoader(true);
+            try { await (await contract.listLandForSale(id)).wait(); loadMyLands(); } catch(e) { alert("Failed"); }
+            toggleLoader(false);
+        }
+        async function buyLand(id, priceWei) {
+            if(!confirm("Purchase for " + ethers.formatEther(priceWei) + " ETH?")) return;
+            toggleLoader(true);
+            try { await (await contract.buyLand(id, { value: priceWei })).wait(); loadMarketplace(); } catch(e) { alert("Failed"); }
+            toggleLoader(false);
+        }
+    </script>
+</body>
+</html>
